@@ -75,7 +75,10 @@ class CardsSecurityAndWirelessTest {
 
         assertFalse(WirelessNetworkRegistry.send(a, bId, 99, 100.0, "closed-port"));
         assertTrue(WirelessNetworkRegistry.send(a, bId, 10, 100.0, "direct"));
-        assertEquals(List.of("hello", "direct"), receivedB);
+
+        String shortPrefix = bId.toString().substring(0, 8);
+        assertTrue(WirelessNetworkRegistry.send(a, shortPrefix, 10, 100.0, "short-direct"));
+        assertEquals(List.of("hello", "direct", "short-direct"), receivedB);
     }
 
     private interface Receiver {

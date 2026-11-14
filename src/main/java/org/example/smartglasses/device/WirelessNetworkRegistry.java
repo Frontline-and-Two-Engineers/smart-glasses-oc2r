@@ -5,6 +5,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -68,6 +71,44 @@ public final class WirelessNetworkRegistry {
 
     public static boolean send(WirelessEndpoint sender, UUID targetAddress, int port, double range, String payload) {
         WirelessEndpoint target = ENDPOINTS.get(targetAddress);
+        return deliverToTarget(sender, target, port, range, payload);
+    }
+
+    public static boolean send(WirelessEndpoint sender, String addressOrPrefix, int port, double range, String payload) {
+        if (addressOrPrefix == null) return false;
+        String clean = addressOrPrefix.trim().toLowerCase(Locale.ROOT);
+        if (clean.length() < 4) {
+            throw new IllegalArgumentException("Address or prefix must be at least 4 characters");
+        }
+
+        WirelessEndpoint target = null;
+        if (clean.length() == 36) {
+            try {
+                target = ENDPOINTS.get(UUID.fromString(clean));
+            } catch (IllegalArgumentException ignored) {
+                // Fall through to prefix search
+            }
+        }
+
+        if (target == null) {
+            List<WirelessEndpoint> matches = new ArrayList<>();
+            for (WirelessEndpoint ep : ENDPOINTS.values()) {
+                if (ep == sender) continue;
+                if (ep.getAddress().toString().toLowerCase(Locale.ROOT).startsWith(clean)) {
+                    matches.add(ep);
+                }
+            }
+            if (matches.isEmpty()) return false;
+            if (matches.size() > 1) {
+                throw new IllegalArgumentException("Ambiguous wireless address prefix: " + clean);
+            }
+            target = matches.get(0);
+        }
+
+        return deliverToTarget(sender, target, port, range, payload);
+    }
+
+    private static boolean deliverToTarget(WirelessEndpoint sender, @Nullable WirelessEndpoint target, int port, double range, String payload) {
         if (target == null || target == sender) return false;
 
         ResourceKey<Level> dim = sender.getDimension();

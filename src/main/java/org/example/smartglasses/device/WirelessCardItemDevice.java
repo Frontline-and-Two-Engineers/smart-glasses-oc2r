@@ -186,8 +186,7 @@ public class WirelessCardItemDevice extends AbstractItemRPCDevice
         validatePort(port);
         WirelessNetworkRegistry.register(this);
         String clean = validatePayload(payload);
-        UUID target = UUID.fromString(targetAddress.trim());
-        return WirelessNetworkRegistry.send(this, target, port, strength, clean);
+        return WirelessNetworkRegistry.send(this, targetAddress, port, strength, clean);
     }
 
     @Nullable
