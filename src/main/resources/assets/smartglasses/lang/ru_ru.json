@@ -1,0 +1,13 @@
+{
+  "itemGroup.smartglasses": "Smart Glasses OC2R",
+  "block.smartglasses.glasses_bridge": "Мост умных очков",
+  "item.smartglasses.smart_glasses": "Умные очки",
+  "message.smartglasses.bound": "Умные очки привязаны к мосту [%s]",
+  "tooltip.smartglasses.bound": "Привязаны к мосту: %s",
+  "tooltip.smartglasses.unbound": "Нажмите ПКМ по мосту очков для привязки",
+  "tooltip.smartglasses.energy": "Энергия: %s / %s FE",
+  "key.categories.smartglasses": "Smart Glasses OC2R",
+  "key.smartglasses.gaze": "Сканировать / Взгляд",
+  "key.smartglasses.cursor": "Курсор HUD",
+  "screen.smartglasses.cursor": "Курсор HUD умных очков"
+}
