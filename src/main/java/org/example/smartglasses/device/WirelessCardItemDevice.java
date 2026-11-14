@@ -46,23 +46,15 @@ public class WirelessCardItemDevice extends AbstractItemRPCDevice
         this.query = query;
         this.address = WirelessCardItem.getOrCreateAddress(identity);
         this.strength = Math.min(256.0, Config.wirelessMaxRange);
-    }
-
-    @Override
-    public void onDeviceMounted() {
         WirelessNetworkRegistry.register(this);
     }
 
     @Override
-    public void onDeviceUnmounted() {
-        WirelessNetworkRegistry.unregister(this);
-    }
-
-    @Override
-    public void onDeviceDisposed() {
+    public void dispose() {
         WirelessNetworkRegistry.unregister(this);
         inbox.clear();
         openPorts.clear();
+        super.dispose();
     }
 
     @Override
@@ -133,6 +125,7 @@ public class WirelessCardItemDevice extends AbstractItemRPCDevice
     @Callback(name = "open", synchronize = false)
     public boolean open(@Parameter("port") int port) {
         validatePort(port);
+        WirelessNetworkRegistry.register(this);
         if (openPorts.contains(port)) return true;
         if (openPorts.size() >= MAX_OPEN_PORTS) {
             throw new IllegalStateException("Too many open ports (max " + MAX_OPEN_PORTS + ")");
@@ -179,6 +172,7 @@ public class WirelessCardItemDevice extends AbstractItemRPCDevice
     @Callback(name = "broadcast")
     public int broadcast(@Parameter("port") int port, @Parameter("payload") String payload) {
         validatePort(port);
+        WirelessNetworkRegistry.register(this);
         String clean = validatePayload(payload);
         return WirelessNetworkRegistry.broadcast(this, port, strength, clean);
     }
@@ -190,6 +184,7 @@ public class WirelessCardItemDevice extends AbstractItemRPCDevice
             @Parameter("payload") String payload
     ) {
         validatePort(port);
+        WirelessNetworkRegistry.register(this);
         String clean = validatePayload(payload);
         UUID target = UUID.fromString(targetAddress.trim());
         return WirelessNetworkRegistry.send(this, target, port, strength, clean);
