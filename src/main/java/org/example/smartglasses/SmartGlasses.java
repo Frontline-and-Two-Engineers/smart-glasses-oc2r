@@ -4,6 +4,8 @@ import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Codec;
 import li.cil.oc2.api.bus.device.Device;
 import li.cil.oc2.api.bus.device.object.ObjectDevice;
+import li.cil.oc2.api.bus.device.provider.ItemDeviceProvider;
+import li.cil.oc2.common.bus.device.provider.Providers;
 import li.cil.oc2.common.capabilities.Capabilities;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Direction;
@@ -41,7 +43,12 @@ import org.example.smartglasses.block.GlassesBridgeBlock;
 import org.example.smartglasses.blockentity.BridgeRegistry;
 import org.example.smartglasses.blockentity.GlassesBridgeBlockEntity;
 import org.example.smartglasses.client.ClientHudState;
+import org.example.smartglasses.device.PastebinCardItemDeviceProvider;
+import org.example.smartglasses.device.WirelessCardItemDeviceProvider;
+import org.example.smartglasses.device.WirelessNetworkRegistry;
+import org.example.smartglasses.item.PastebinCardItem;
 import org.example.smartglasses.item.SmartGlassesItem;
+import org.example.smartglasses.item.WirelessCardItem;
 import org.example.smartglasses.network.GlassesGazePayload;
 import org.example.smartglasses.network.GlassesHudClickPayload;
 import org.example.smartglasses.network.SyncHudPayload;
@@ -64,9 +71,16 @@ public class SmartGlasses {
             DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, MODID);
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
+    public static final DeferredRegister<ItemDeviceProvider> ITEM_DEVICE_PROVIDERS =
+            DeferredRegister.create(Providers.itemDeviceProviderRegistry(), MODID);
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> BRIDGE_ID =
             DATA_COMPONENTS.registerComponentType("bridge_id", builder -> builder
+                    .persistent(UUIDUtil.CODEC)
+                    .networkSynchronized(UUIDUtil.STREAM_CODEC));
+
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<UUID>> WIRELESS_ADDRESS =
+            DATA_COMPONENTS.registerComponentType("wireless_address", builder -> builder
                     .persistent(UUIDUtil.CODEC)
                     .networkSynchronized(UUIDUtil.STREAM_CODEC));
 
@@ -92,6 +106,22 @@ public class SmartGlasses {
                     new Item.Properties().stacksTo(1)
             ));
 
+    public static final DeferredItem<WirelessCardItem> WIRELESS_CARD_ITEM =
+            ITEMS.register("wireless_card", () -> new WirelessCardItem(
+                    new Item.Properties().stacksTo(1)
+            ));
+
+    public static final DeferredItem<PastebinCardItem> PASTEBIN_CARD_ITEM =
+            ITEMS.register("pastebin_card", () -> new PastebinCardItem(
+                    new Item.Properties().stacksTo(1)
+            ));
+
+    public static final DeferredHolder<ItemDeviceProvider, WirelessCardItemDeviceProvider> WIRELESS_CARD_PROVIDER =
+            ITEM_DEVICE_PROVIDERS.register("wireless_card", WirelessCardItemDeviceProvider::new);
+
+    public static final DeferredHolder<ItemDeviceProvider, PastebinCardItemDeviceProvider> PASTEBIN_CARD_PROVIDER =
+            ITEM_DEVICE_PROVIDERS.register("pastebin_card", PastebinCardItemDeviceProvider::new);
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GlassesBridgeBlockEntity>> GLASSES_BRIDGE_BE =
             BLOCK_ENTITIES.register("glasses_bridge", () -> BlockEntityType.Builder.of(
                     GlassesBridgeBlockEntity::new,
@@ -105,6 +135,8 @@ public class SmartGlasses {
                     .displayItems((parameters, output) -> {
                         output.accept(SMART_GLASSES_ITEM.get());
                         output.accept(GLASSES_BRIDGE_ITEM.get());
+                        output.accept(WIRELESS_CARD_ITEM.get());
+                        output.accept(PASTEBIN_CARD_ITEM.get());
                     })
                     .build());
 
@@ -114,6 +146,7 @@ public class SmartGlasses {
         BLOCK_ENTITIES.register(modEventBus);
         DATA_COMPONENTS.register(modEventBus);
         CREATIVE_MODE_TABS.register(modEventBus);
+        ITEM_DEVICE_PROVIDERS.register(modEventBus);
 
         modEventBus.addListener(this::registerCapabilities);
         modEventBus.addListener(this::registerPayloads);
@@ -198,5 +231,6 @@ public class SmartGlasses {
     @SubscribeEvent
     public void onServerStopping(ServerStoppingEvent event) {
         BridgeRegistry.clear();
+        WirelessNetworkRegistry.clear();
     }
 }

@@ -29,6 +29,22 @@ public class Config {
             .comment("FE energy consumed per tick while connected to a bridge (when requireEnergy is true).")
             .defineInRange("energyPerTick", 5, 0, 10000);
 
+    private static final ModConfigSpec.IntValue WIRELESS_MAX_RANGE = BUILDER
+            .comment("Maximum range (in blocks) for Wireless Network Cards.")
+            .defineInRange("wirelessMaxRange", 512, 16, 100000);
+
+    private static final ModConfigSpec.BooleanValue ENABLE_PASTEBIN_CARD = BUILDER
+            .comment("Whether the Pastebin & GitHub Card is allowed to make outbound HTTPS requests.")
+            .define("enablePastebinCard", true);
+
+    private static final ModConfigSpec.IntValue PASTEBIN_MAX_BYTES = BUILDER
+            .comment("Maximum response size (in bytes) for Pastebin & GitHub Card downloads.")
+            .defineInRange("pastebinMaxBytes", 262144, 1024, 2097152);
+
+    private static final ModConfigSpec.IntValue PASTEBIN_COOLDOWN_MS = BUILDER
+            .comment("Minimum cooldown (in milliseconds) between requests on a Pastebin & GitHub Card.")
+            .defineInRange("pastebinCooldownMs", 2000, 200, 60000);
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     public static int maxRange = 256;
@@ -37,6 +53,11 @@ public class Config {
     public static int energyCapacity = 100000;
     public static int energyPerTick = 5;
 
+    public static int wirelessMaxRange = 512;
+    public static boolean enablePastebinCard = true;
+    public static int pastebinMaxBytes = 262144;
+    public static int pastebinCooldownMs = 2000;
+
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         maxRange = MAX_RANGE.get();
@@ -44,5 +65,9 @@ public class Config {
         requireEnergy = REQUIRE_ENERGY.get();
         energyCapacity = ENERGY_CAPACITY.get();
         energyPerTick = ENERGY_PER_TICK.get();
+        wirelessMaxRange = WIRELESS_MAX_RANGE.get();
+        enablePastebinCard = ENABLE_PASTEBIN_CARD.get();
+        pastebinMaxBytes = PASTEBIN_MAX_BYTES.get();
+        pastebinCooldownMs = PASTEBIN_COOLDOWN_MS.get();
     }
 }

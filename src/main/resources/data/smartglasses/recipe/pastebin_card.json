@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    " B ",
+    "TCT",
+    "IEI"
+  ],
+  "key": {
+    "B": { "item": "minecraft:book" },
+    "T": { "item": "oc2r:transistor" },
+    "C": { "item": "oc2r:circuit_board" },
+    "I": { "item": "minecraft:iron_ingot" },
+    "E": { "item": "minecraft:ender_pearl" }
+  },
+  "result": {
+    "id": "smartglasses:pastebin_card",
+    "count": 1
+  }
+}
