@@ -2,19 +2,25 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "pattern": [
-    "IRI",
-    "G G",
-    "I I"
+    "ICI",
+    "GSG",
+    "T T"
   ],
   "key": {
     "I": {
       "item": "minecraft:iron_ingot"
     },
-    "R": {
-      "item": "minecraft:redstone"
+    "C": {
+      "item": "oc2r:circuit_board"
     },
     "G": {
-      "item": "minecraft:glass_pane"
+      "item": "minecraft:tinted_glass"
+    },
+    "S": {
+      "item": "oc2r:gpu_tier_1"
+    },
+    "T": {
+      "item": "oc2r:transistor"
     }
   },
   "result": {

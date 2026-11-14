@@ -2,16 +2,22 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "pattern": [
-    "IRI",
-    "RER",
-    "IRI"
+    "IBI",
+    "CNC",
+    "IEI"
   ],
   "key": {
     "I": {
       "item": "minecraft:iron_ingot"
     },
-    "R": {
-      "item": "minecraft:redstone"
+    "B": {
+      "item": "oc2r:bus_interface"
+    },
+    "C": {
+      "item": "oc2r:circuit_board"
+    },
+    "N": {
+      "item": "oc2r:network_interface_card"
     },
     "E": {
       "item": "minecraft:ender_pearl"
