@@ -488,7 +488,7 @@ public class GlassesBridgeBlockEntity extends BlockEntity
             @Parameter("y") double y,
             @Parameter("width") double width,
             @Parameter("height") double height,
-            @Parameter("values") List<Number> values,
+            @Parameter("values") double[] values,
             @Parameter("color") int color,
             @Parameter("bgColor") int bgColor
     ) {
@@ -503,7 +503,7 @@ public class GlassesBridgeBlockEntity extends BlockEntity
             @Parameter("y") double y,
             @Parameter("width") double width,
             @Parameter("height") double height,
-            @Parameter("values") List<Number> values,
+            @Parameter("values") double[] values,
             @Parameter("color") int color,
             @Parameter("bgColor") int bgColor
     ) {
@@ -619,13 +619,13 @@ public class GlassesBridgeBlockEntity extends BlockEntity
         return stats;
     }
 
-    private static List<Float> toFloatList(@Nullable List<Number> values) {
-        if (values == null || values.isEmpty()) return List.of();
-        int limit = Math.min(values.size(), 256);
+    private static List<Float> toFloatList(@Nullable double[] values) {
+        if (values == null || values.length == 0) return List.of();
+        int limit = Math.min(values.length, 256);
         List<Float> out = new ArrayList<>(limit);
         for (int i = 0; i < limit; i++) {
-            Number n = values.get(i);
-            out.add(n != null ? n.floatValue() : 0.0f);
+            double v = values[i];
+            out.add(Double.isFinite(v) ? (float) v : 0.0f);
         }
         return out;
     }

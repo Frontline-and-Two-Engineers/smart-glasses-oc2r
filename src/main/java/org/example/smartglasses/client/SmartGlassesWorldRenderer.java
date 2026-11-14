@@ -113,7 +113,7 @@ public final class SmartGlassesWorldRenderer {
             }
         }
 
-        bufferSource.endBatch();
+        bufferSource.endBatch(RenderType.lines());
     }
 
     private static void renderBoxAndLabel(
