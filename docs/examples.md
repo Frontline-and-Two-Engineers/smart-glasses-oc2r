@@ -2,7 +2,7 @@
 
 Перед запуском Lua-скриптов в Linux внутри OC2R убедитесь, что `LUA_PATH` видит системные библиотеки:
 ```sh
-export LUA_PATH="/lib/lua/?.lua;/usr/lib/lua/?.lua;./?.lua;;"
+export LUA_PATH="/mnt/builtin/lib/lua/?.lua"
 ```
 
 ---
@@ -12,7 +12,6 @@ export LUA_PATH="/lib/lua/?.lua;/usr/lib/lua/?.lua;./?.lua;;"
 Нажмите **`H`** в игре, чтобы появился курсор, и кликните по кнопкам на экране.
 
 ```lua
-#!/usr/bin/lua
 local devices = require("devices")
 local g = assert(devices:find("glasses_bridge"), "Bridge not found")
 
@@ -65,7 +64,6 @@ end
 Показывает HP, броню, координаты и живой график заряда/высоты в правом верхнем углу.
 
 ```lua
-#!/usr/bin/lua
 local devices = require("devices")
 local g = assert(devices:find("glasses_bridge"), "Bridge not found")
 
@@ -110,7 +108,6 @@ end
 * Нажмите **`G`**, глядя на блок или моба — поставит на них 3D AR-подсветку.
 
 ```lua
-#!/usr/bin/lua
 local devices = require("devices")
 local g = assert(devices:find("glasses_bridge"), "Bridge not found")
 
