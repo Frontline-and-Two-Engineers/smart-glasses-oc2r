@@ -49,6 +49,7 @@ import org.example.smartglasses.blockentity.WirelessRepeaterBlockEntity;
 import org.example.smartglasses.client.ClientHudState;
 import org.example.smartglasses.device.PastebinCardItemDeviceProvider;
 import org.example.smartglasses.device.WirelessCardItemDeviceProvider;
+import org.example.smartglasses.floppy.TestFloppyManager;
 import org.example.smartglasses.device.WirelessNetworkRegistry;
 import org.example.smartglasses.item.PastebinCardItem;
 import org.example.smartglasses.item.SmartGlassesItem;
@@ -192,6 +193,12 @@ public class SmartGlasses {
                         output.accept(WIRELESS_REPEATER_ITEM.get());
                         output.accept(WIRELESS_CARD_ITEM.get());
                         output.accept(PASTEBIN_CARD_ITEM.get());
+                        for (TestFloppyManager.FloppyPreset preset : TestFloppyManager.FloppyPreset.values()) {
+                            ItemStack floppy = TestFloppyManager.createFloppyStack(preset);
+                            if (!floppy.isEmpty()) {
+                                output.accept(floppy);
+                            }
+                        }
                     })
                     .build());
 
@@ -207,6 +214,7 @@ public class SmartGlasses {
         modEventBus.addListener(this::registerPayloads);
 
         NeoForge.EVENT_BUS.register(this);
+        NeoForge.EVENT_BUS.register(TestFloppyManager.class);
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         LOGGER.info("Smart Glasses OC2R initialized");
     }

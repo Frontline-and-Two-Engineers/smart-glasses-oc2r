@@ -24,5 +24,16 @@
   "key.categories.smartglasses": "Smart Glasses OC2R",
   "key.smartglasses.gaze": "Scan / Gaze Target",
   "key.smartglasses.cursor": "Toggle HUD Cursor",
-  "screen.smartglasses.cursor": "Smart Glasses HUD Cursor"
+  "screen.smartglasses.cursor": "Smart Glasses HUD Cursor",
+  "item.smartglasses.floppy.hud": "Test Floppy: HUD & AR",
+  "item.smartglasses.floppy.hud.lore": "Contains test_hud.lua & test_ar.lua",
+  "item.smartglasses.floppy.wireless": "Test Floppy: Wireless",
+  "item.smartglasses.floppy.wireless.lore": "Contains test_wireless_tx.lua & test_wireless_rx.lua",
+  "item.smartglasses.floppy.radar": "Test Floppy: Entity Radar",
+  "item.smartglasses.floppy.radar.lore": "Contains test_radar.lua",
+  "item.smartglasses.floppy.pastebin": "Test Floppy: Pastebin & GitHub",
+  "item.smartglasses.floppy.pastebin.lore": "Contains test_pastebin.lua & test_github.lua",
+  "item.smartglasses.floppy.all": "Test Floppy: All-in-One",
+  "item.smartglasses.floppy.all.lore": "Contains all Smart Glasses OC2R test scripts",
+  "item.smartglasses.floppy.usage_hint": "Insert into Disk Drive, then: mount /dev/vda /mnt/floppy"
 }

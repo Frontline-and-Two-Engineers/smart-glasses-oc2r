@@ -24,5 +24,16 @@
   "key.categories.smartglasses": "Smart Glasses OC2R",
   "key.smartglasses.gaze": "Сканировать / Взгляд",
   "key.smartglasses.cursor": "Курсор HUD",
-  "screen.smartglasses.cursor": "Курсор HUD умных очков"
+  "screen.smartglasses.cursor": "Курсор HUD умных очков",
+  "item.smartglasses.floppy.hud": "Тестовая дискета: HUD и AR",
+  "item.smartglasses.floppy.hud.lore": "Содержит test_hud.lua и test_ar.lua",
+  "item.smartglasses.floppy.wireless": "Тестовая дискета: Беспроводная сеть",
+  "item.smartglasses.floppy.wireless.lore": "Содержит test_wireless_tx.lua и test_wireless_rx.lua",
+  "item.smartglasses.floppy.radar": "Тестовая дискета: Радар сущностей",
+  "item.smartglasses.floppy.radar.lore": "Содержит test_radar.lua",
+  "item.smartglasses.floppy.pastebin": "Тестовая дискета: Pastebin и GitHub",
+  "item.smartglasses.floppy.pastebin.lore": "Содержит test_pastebin.lua и test_github.lua",
+  "item.smartglasses.floppy.all": "Тестовая дискета: Всё в одном",
+  "item.smartglasses.floppy.all.lore": "Содержит все тестовые скрипты Smart Glasses OC2R",
+  "item.smartglasses.floppy.usage_hint": "Вставьте в дисковод, затем: mount /dev/vda /mnt/floppy"
 }
