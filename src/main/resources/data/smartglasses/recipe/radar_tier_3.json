@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "DED",
+    "SRS",
+    "DCD"
+  ],
+  "key": {
+    "D": { "item": "minecraft:diamond" },
+    "E": { "item": "minecraft:ender_eye" },
+    "S": { "item": "oc2r:scanner_module" },
+    "R": { "item": "smartglasses:radar_tier_2" },
+    "C": { "item": "oc2r:cpu_tier_2" }
+  },
+  "result": { "id": "smartglasses:radar_tier_3", "count": 1 }
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "GCG",
+    "TAT",
+    " R "
+  ],
+  "key": {
+    "G": { "item": "minecraft:gold_ingot" },
+    "C": { "item": "oc2r:circuit_board" },
+    "T": { "item": "oc2r:transistor" },
+    "A": { "item": "smartglasses:smart_glasses" },
+    "R": { "item": "minecraft:redstone" }
+  },
+  "result": { "id": "smartglasses:smart_glasses_tier_2", "count": 1 }
+}

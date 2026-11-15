@@ -271,6 +271,7 @@ public class GlassesBridgeBlockEntity extends BlockEntity
                 Map<String, Object> info = new LinkedHashMap<>();
                 info.put("uuid", player.getUUID().toString());
                 info.put("name", player.getGameProfile().getName());
+                info.put("tier", SmartGlassesItem.getTier(SmartGlassesItem.getEquippedGlasses(player)));
                 info.put("x", player.getX());
                 info.put("y", player.getY());
                 info.put("z", player.getZ());

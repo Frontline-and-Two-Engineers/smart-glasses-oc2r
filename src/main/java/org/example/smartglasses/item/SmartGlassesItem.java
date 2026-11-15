@@ -34,9 +34,22 @@ import java.util.UUID;
  * Wearable Smart Glasses item that binds to a Glasses Bridge block and displays its HUD.
  */
 public class SmartGlassesItem extends Item implements Equipable {
+    private final int tier;
 
-    public SmartGlassesItem(Properties properties) {
+    public SmartGlassesItem(int tier, Properties properties) {
         super(properties);
+        this.tier = Math.clamp(tier, 1, 3);
+    }
+
+    public int getTier() {
+        return tier;
+    }
+
+    public static int getTier(ItemStack stack) {
+        if (stack.isEmpty() || !(stack.getItem() instanceof SmartGlassesItem item)) {
+            return 0;
+        }
+        return item.getTier();
     }
 
     @Override
@@ -95,6 +108,10 @@ public class SmartGlassesItem extends Item implements Equipable {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+        tooltipComponents.add(
+                Component.translatable("tooltip.smartglasses.glasses_tier_" + tier)
+                        .withStyle(ChatFormatting.YELLOW)
+        );
         UUID bridgeId = getBridgeId(stack);
         if (bridgeId != null) {
             tooltipComponents.add(
@@ -168,11 +185,17 @@ public class SmartGlassesItem extends Item implements Equipable {
             if (invOpt.isPresent()) {
                 Object handler = invOpt.get();
                 Method findFirst = handler.getClass().getMethod("findFirstCurio", Item.class);
-                Optional<?> resultOpt = (Optional<?>) findFirst.invoke(handler, SmartGlasses.SMART_GLASSES_ITEM.get());
-                if (resultOpt.isPresent()) {
-                    Object slotResult = resultOpt.get();
-                    Method stackMethod = slotResult.getClass().getMethod("stack");
-                    return (ItemStack) stackMethod.invoke(slotResult);
+                for (Item item : List.of(
+                        SmartGlasses.SMART_GLASSES_TIER_3.get(),
+                        SmartGlasses.SMART_GLASSES_TIER_2.get(),
+                        SmartGlasses.SMART_GLASSES_ITEM.get()
+                )) {
+                    Optional<?> resultOpt = (Optional<?>) findFirst.invoke(handler, item);
+                    if (resultOpt.isPresent()) {
+                        Object slotResult = resultOpt.get();
+                        Method stackMethod = slotResult.getClass().getMethod("stack");
+                        return (ItemStack) stackMethod.invoke(slotResult);
+                    }
                 }
             }
         } catch (Throwable ignored) {

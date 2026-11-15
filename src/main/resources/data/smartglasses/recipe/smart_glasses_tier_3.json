@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "DCD",
+    "SAS",
+    " E "
+  ],
+  "key": {
+    "D": { "item": "minecraft:diamond" },
+    "C": { "item": "oc2r:gpu_tier_2" },
+    "S": { "item": "oc2r:scanner_module" },
+    "A": { "item": "smartglasses:smart_glasses_tier_2" },
+    "E": { "item": "minecraft:ender_eye" }
+  },
+  "result": { "id": "smartglasses:smart_glasses_tier_3", "count": 1 }
+}

@@ -81,14 +81,14 @@ public final class SmartGlassesClientEvents {
             Minecraft mc = Minecraft.getInstance();
             if (mc.player == null || mc.level == null) return;
 
-            boolean wearing = !SmartGlassesItem.getEquippedGlasses(mc.player).isEmpty();
+            int tier = SmartGlassesItem.getTier(SmartGlassesItem.getEquippedGlasses(mc.player));
             while (GAZE_KEY.consumeClick()) {
-                if (wearing) {
+                if (tier >= 2) {
                     sendGazeRaycast(mc);
                 }
             }
             while (CURSOR_KEY.consumeClick()) {
-                if (wearing && mc.screen == null) {
+                if (tier >= 2 && mc.screen == null) {
                     mc.setScreen(new SmartGlassesCursorScreen());
                 }
             }

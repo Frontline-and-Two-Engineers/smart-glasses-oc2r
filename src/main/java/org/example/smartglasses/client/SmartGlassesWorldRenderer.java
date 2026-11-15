@@ -33,7 +33,7 @@ public final class SmartGlassesWorldRenderer {
         }
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.level == null || mc.options.hideGui) return;
-        if (SmartGlassesItem.getEquippedGlasses(mc.player).isEmpty()) {
+        if (SmartGlassesItem.getTier(SmartGlassesItem.getEquippedGlasses(mc.player)) < 3) {
             return;
         }
 

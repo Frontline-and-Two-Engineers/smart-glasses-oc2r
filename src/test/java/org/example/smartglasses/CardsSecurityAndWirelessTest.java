@@ -81,6 +81,42 @@ class CardsSecurityAndWirelessTest {
         assertEquals(List.of("hello", "direct", "short-direct"), receivedB);
     }
 
+    @Test
+    void wirelessRepeaterRelaysWhenPoweredAndStopsWhenOutOfEnergy() {
+        UUID aId = UUID.randomUUID();
+        UUID cId = UUID.randomUUID();
+        UUID repId = UUID.randomUUID();
+
+        List<String> receivedC = new ArrayList<>();
+        WirelessNetworkRegistry.WirelessEndpoint a = fakeEndpoint(aId, Level.OVERWORLD, new Vec3(0, 64, 0), Set.of(10), (f, p, d, m) -> {});
+        WirelessNetworkRegistry.WirelessEndpoint c = fakeEndpoint(cId, Level.OVERWORLD, new Vec3(350, 64, 0), Set.of(10), (f, p, d, m) -> receivedC.add(m));
+
+        int[] energy = {50};
+        WirelessNetworkRegistry.WirelessRepeater repeater = new WirelessNetworkRegistry.WirelessRepeater() {
+            @Override public UUID getRepeaterId() { return repId; }
+            @Override public ResourceKey<Level> getDimension() { return Level.OVERWORLD; }
+            @Override public Vec3 getPosition() { return new Vec3(180, 64, 0); }
+            @Override public double getRelayRange() { return 250.0; }
+            @Override public boolean tryConsumeRelayEnergy() {
+                if (energy[0] < 30) return false;
+                energy[0] -= 30;
+                return true;
+            }
+        };
+
+        WirelessNetworkRegistry.register(a);
+        WirelessNetworkRegistry.register(c);
+        WirelessNetworkRegistry.registerRepeater(repeater);
+
+        // First relay succeeds (50 -> 20 FE)
+        assertEquals(1, WirelessNetworkRegistry.broadcast(a, 10, 200.0, "via-repeater"));
+        assertEquals(List.of("via-repeater"), receivedC);
+
+        // Second relay fails (20 < 30 FE)
+        assertEquals(0, WirelessNetworkRegistry.broadcast(a, 10, 200.0, "no-power"));
+        assertEquals(List.of("via-repeater"), receivedC);
+    }
+
     private interface Receiver {
         void onMsg(UUID from, int port, double dist, String msg);
     }

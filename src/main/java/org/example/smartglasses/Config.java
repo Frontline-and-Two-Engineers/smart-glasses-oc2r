@@ -33,6 +33,18 @@ public class Config {
             .comment("Maximum range (in blocks) for Wireless Network Cards.")
             .defineInRange("wirelessMaxRange", 512, 16, 100000);
 
+    private static final ModConfigSpec.IntValue REPEATER_RANGE = BUILDER
+            .comment("Relay range (in blocks) for Wireless Repeaters.")
+            .defineInRange("repeaterRange", 512, 16, 100000);
+
+    private static final ModConfigSpec.IntValue REPEATER_ENERGY_CAPACITY = BUILDER
+            .comment("FE energy capacity of a Wireless Repeater.")
+            .defineInRange("repeaterEnergyCapacity", 50000, 1000, 100000000);
+
+    private static final ModConfigSpec.IntValue REPEATER_ENERGY_PER_PACKET = BUILDER
+            .comment("FE energy consumed by a Wireless Repeater per relayed packet.")
+            .defineInRange("repeaterEnergyPerPacket", 25, 0, 100000);
+
     private static final ModConfigSpec.BooleanValue ENABLE_PASTEBIN_CARD = BUILDER
             .comment("Whether the Pastebin & GitHub Card is allowed to make outbound HTTPS requests.")
             .define("enablePastebinCard", true);
@@ -54,6 +66,9 @@ public class Config {
     public static int energyPerTick = 5;
 
     public static int wirelessMaxRange = 512;
+    public static int repeaterRange = 512;
+    public static int repeaterEnergyCapacity = 50000;
+    public static int repeaterEnergyPerPacket = 25;
     public static boolean enablePastebinCard = true;
     public static int pastebinMaxBytes = 262144;
     public static int pastebinCooldownMs = 2000;
@@ -66,6 +81,9 @@ public class Config {
         energyCapacity = ENERGY_CAPACITY.get();
         energyPerTick = ENERGY_PER_TICK.get();
         wirelessMaxRange = WIRELESS_MAX_RANGE.get();
+        repeaterRange = REPEATER_RANGE.get();
+        repeaterEnergyCapacity = REPEATER_ENERGY_CAPACITY.get();
+        repeaterEnergyPerPacket = REPEATER_ENERGY_PER_PACKET.get();
         enablePastebinCard = ENABLE_PASTEBIN_CARD.get();
         pastebinMaxBytes = PASTEBIN_MAX_BYTES.get();
         pastebinCooldownMs = PASTEBIN_COOLDOWN_MS.get();

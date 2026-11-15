@@ -40,8 +40,12 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.example.smartglasses.block.GlassesBridgeBlock;
+import org.example.smartglasses.block.RadarBlock;
+import org.example.smartglasses.block.WirelessRepeaterBlock;
 import org.example.smartglasses.blockentity.BridgeRegistry;
 import org.example.smartglasses.blockentity.GlassesBridgeBlockEntity;
+import org.example.smartglasses.blockentity.RadarBlockEntity;
+import org.example.smartglasses.blockentity.WirelessRepeaterBlockEntity;
 import org.example.smartglasses.client.ClientHudState;
 import org.example.smartglasses.device.PastebinCardItemDeviceProvider;
 import org.example.smartglasses.device.WirelessCardItemDeviceProvider;
@@ -101,8 +105,39 @@ public class SmartGlasses {
     public static final DeferredItem<BlockItem> GLASSES_BRIDGE_ITEM =
             ITEMS.registerSimpleBlockItem("glasses_bridge", GLASSES_BRIDGE_BLOCK);
 
+    public static final DeferredBlock<RadarBlock> RADAR_TIER_1_BLOCK =
+            BLOCKS.register("radar_tier_1", () -> new RadarBlock(1, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(2.5f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<RadarBlock> RADAR_TIER_2_BLOCK =
+            BLOCKS.register("radar_tier_2", () -> new RadarBlock(2, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(2.5f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredBlock<RadarBlock> RADAR_TIER_3_BLOCK =
+            BLOCKS.register("radar_tier_3", () -> new RadarBlock(3, BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(2.5f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+
+    public static final DeferredItem<BlockItem> RADAR_TIER_1_ITEM =
+            ITEMS.registerSimpleBlockItem("radar_tier_1", RADAR_TIER_1_BLOCK);
+    public static final DeferredItem<BlockItem> RADAR_TIER_2_ITEM =
+            ITEMS.registerSimpleBlockItem("radar_tier_2", RADAR_TIER_2_BLOCK);
+    public static final DeferredItem<BlockItem> RADAR_TIER_3_ITEM =
+            ITEMS.registerSimpleBlockItem("radar_tier_3", RADAR_TIER_3_BLOCK);
+
+    public static final DeferredBlock<WirelessRepeaterBlock> WIRELESS_REPEATER_BLOCK =
+            BLOCKS.register("wireless_repeater", () -> new WirelessRepeaterBlock(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(2.5f, 6.0f).sound(SoundType.METAL).requiresCorrectToolForDrops()));
+    public static final DeferredItem<BlockItem> WIRELESS_REPEATER_ITEM =
+            ITEMS.registerSimpleBlockItem("wireless_repeater", WIRELESS_REPEATER_BLOCK);
+
     public static final DeferredItem<SmartGlassesItem> SMART_GLASSES_ITEM =
-            ITEMS.register("smart_glasses", () -> new SmartGlassesItem(
+            ITEMS.register("smart_glasses", () -> new SmartGlassesItem(1,
+                    new Item.Properties().stacksTo(1)
+            ));
+    public static final DeferredItem<SmartGlassesItem> SMART_GLASSES_TIER_2 =
+            ITEMS.register("smart_glasses_tier_2", () -> new SmartGlassesItem(2,
+                    new Item.Properties().stacksTo(1)
+            ));
+    public static final DeferredItem<SmartGlassesItem> SMART_GLASSES_TIER_3 =
+            ITEMS.register("smart_glasses_tier_3", () -> new SmartGlassesItem(3,
                     new Item.Properties().stacksTo(1)
             ));
 
@@ -128,13 +163,33 @@ public class SmartGlasses {
                     GLASSES_BRIDGE_BLOCK.get()
             ).build(null));
 
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<RadarBlockEntity>> RADAR_BE =
+            BLOCK_ENTITIES.register("radar", () -> BlockEntityType.Builder.of(
+                    RadarBlockEntity::new,
+                    RADAR_TIER_1_BLOCK.get(),
+                    RADAR_TIER_2_BLOCK.get(),
+                    RADAR_TIER_3_BLOCK.get()
+            ).build(null));
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<WirelessRepeaterBlockEntity>> WIRELESS_REPEATER_BE =
+            BLOCK_ENTITIES.register("wireless_repeater", () -> BlockEntityType.Builder.of(
+                    WirelessRepeaterBlockEntity::new,
+                    WIRELESS_REPEATER_BLOCK.get()
+            ).build(null));
+
     public static final DeferredHolder<CreativeModeTab, CreativeModeTab> SMART_GLASSES_TAB =
             CREATIVE_MODE_TABS.register("smartglasses", () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup.smartglasses"))
                     .icon(() -> new ItemStack(SMART_GLASSES_ITEM.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(SMART_GLASSES_ITEM.get());
+                        output.accept(SMART_GLASSES_TIER_2.get());
+                        output.accept(SMART_GLASSES_TIER_3.get());
                         output.accept(GLASSES_BRIDGE_ITEM.get());
+                        output.accept(RADAR_TIER_1_ITEM.get());
+                        output.accept(RADAR_TIER_2_ITEM.get());
+                        output.accept(RADAR_TIER_3_ITEM.get());
+                        output.accept(WIRELESS_REPEATER_ITEM.get());
                         output.accept(WIRELESS_CARD_ITEM.get());
                         output.accept(PASTEBIN_CARD_ITEM.get());
                     })
@@ -166,10 +221,22 @@ public class SmartGlasses {
                 GLASSES_BRIDGE_BE.get(),
                 (be, side) -> new ObjectDevice(be, List.of("glasses_bridge"))
         );
+        event.registerBlockEntity(
+                oc2rDeviceCap,
+                RADAR_BE.get(),
+                (be, side) -> new ObjectDevice(be, List.of("radar"))
+        );
+        event.registerBlockEntity(
+                net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.BLOCK,
+                WIRELESS_REPEATER_BE.get(),
+                (be, side) -> be.getEnergyStorage()
+        );
         event.registerItem(
                 net.neoforged.neoforge.capabilities.Capabilities.EnergyStorage.ITEM,
                 (stack, ctx) -> new SmartGlassesItem.EnergyStorage(stack),
-                SMART_GLASSES_ITEM.get()
+                SMART_GLASSES_ITEM.get(),
+                SMART_GLASSES_TIER_2.get(),
+                SMART_GLASSES_TIER_3.get()
         );
     }
 
@@ -185,7 +252,9 @@ public class SmartGlasses {
                 GlassesGazePayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer player) {
-                        UUID bridgeId = SmartGlassesItem.getBridgeId(SmartGlassesItem.getEquippedGlasses(player));
+                        ItemStack glasses = SmartGlassesItem.getEquippedGlasses(player);
+                        if (SmartGlassesItem.getTier(glasses) < 2) return;
+                        UUID bridgeId = SmartGlassesItem.getBridgeId(glasses);
                         GlassesBridgeBlockEntity bridge = BridgeRegistry.get(bridgeId);
                         if (bridge != null) {
                             bridge.handleGaze(player, payload);
@@ -198,7 +267,9 @@ public class SmartGlasses {
                 GlassesHudClickPayload.STREAM_CODEC,
                 (payload, context) -> context.enqueueWork(() -> {
                     if (context.player() instanceof ServerPlayer player) {
-                        UUID bridgeId = SmartGlassesItem.getBridgeId(SmartGlassesItem.getEquippedGlasses(player));
+                        ItemStack glasses = SmartGlassesItem.getEquippedGlasses(player);
+                        if (SmartGlassesItem.getTier(glasses) < 2) return;
+                        UUID bridgeId = SmartGlassesItem.getBridgeId(glasses);
                         GlassesBridgeBlockEntity bridge = BridgeRegistry.get(bridgeId);
                         if (bridge != null) {
                             bridge.handleHudClick(player, payload);
@@ -214,7 +285,9 @@ public class SmartGlasses {
         if (!raw.startsWith(CHAT_COMMAND_PREFIX)) return;
 
         ServerPlayer player = event.getPlayer();
-        UUID bridgeId = SmartGlassesItem.getBridgeId(SmartGlassesItem.getEquippedGlasses(player));
+        ItemStack glasses = SmartGlassesItem.getEquippedGlasses(player);
+        if (SmartGlassesItem.getTier(glasses) < 2) return;
+        UUID bridgeId = SmartGlassesItem.getBridgeId(glasses);
         if (bridgeId == null) return;
 
         GlassesBridgeBlockEntity bridge = BridgeRegistry.get(bridgeId);

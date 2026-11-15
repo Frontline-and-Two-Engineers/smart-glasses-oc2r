@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "pattern": [
+    "GCG",
+    "TRT",
+    "G G"
+  ],
+  "key": {
+    "G": { "item": "minecraft:gold_ingot" },
+    "C": { "item": "oc2r:circuit_board" },
+    "T": { "item": "oc2r:transistor" },
+    "R": { "item": "smartglasses:radar_tier_1" }
+  },
+  "result": { "id": "smartglasses:radar_tier_2", "count": 1 }
+}
