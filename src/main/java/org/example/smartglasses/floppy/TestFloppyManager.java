@@ -235,11 +235,14 @@ public final class TestFloppyManager {
             while os.time() < deadline do
               local ev = bridge:pollEvent()
               if ev then
-                print("Event:", ev.type, ev.player, ev.widgetId or ev.message or "")
-                if ev.type == "hud_click" and ev.widgetId == "btn" then
-                  bridge:addText("title", 18, 16, "Clicked by " .. tostring(ev.player) .. "!", 0xFFFACC15, 1.0)
-                elseif ev.type == "chat_command" then
-                  bridge:broadcastMessage("Echo: " .. tostring(ev.message))
+                local detail = ev.widgetId or ev.command or ev.targetType or ""
+                print("Event:", ev.event, ev.playerName, detail)
+                if ev.event == "glasses_hud_click" and ev.widgetId == "btn" then
+                  bridge:addText("title", 18, 16, "Clicked by " .. tostring(ev.playerName) .. "!", 0xFFFACC15, 1.0)
+                elseif ev.event == "glasses_chat_command" then
+                  bridge:broadcastMessage("Echo: " .. tostring(ev.command))
+                elseif ev.event == "glasses_gaze" then
+                  bridge:broadcastMessage("Gaze: " .. tostring(ev.targetType) .. " " .. tostring(ev.entityName or ""))
                 end
               end
               os.execute("sleep 0.2")
@@ -306,11 +309,10 @@ public final class TestFloppyManager {
             while true do
               local msg = card:pollMessage()
               if msg then
-                print(string.format("[%s -> port %s | dist=%.1f | hops=%s] %s",
-                  tostring(msg.sender):sub(1, 8),
+                print(string.format("[%s -> port %s | dist=%.1f] %s",
+                  tostring(msg.from):sub(1, 8),
                   tostring(msg.port),
                   tonumber(msg.distance or 0),
-                  tostring(msg.hops or 0),
                   tostring(msg.payload)))
               end
               os.execute("sleep 0.2")
@@ -324,18 +326,38 @@ public final class TestFloppyManager {
             local tier = radar:getTier()
             local maxRange = radar:getMaxRange()
             print(string.format("Radar Tier %d (max range: %.0f blocks)", tier, maxRange))
+            print("Capabilities: "
+              .. (tier >= 1 and "[T1: type/dist/uuid <=64] " or "")
+              .. (tier >= 2 and "[T2: hp/maxHp <=128] " or "")
+              .. (tier >= 3 and "[T3: name/isPlayer/xyz <=256]" or ""))
 
             local hits = radar:scan(maxRange)
             print("Entities detected: " .. tostring(#hits))
+            local withHp, withCoords, players = 0, 0, 0
             for i, e in ipairs(hits) do
-              local line = string.format("%2d. %-20s dist=%.1f", i, tostring(e.type or e.name), tonumber(e.distance or 0))
-              if e.health then
-                line = line .. string.format(" HP=%.1f/%.1f", e.health, e.maxHealth or 0)
+              local label = e.name or e.type or e.uuid
+              local line = string.format("%2d. %-22s dist=%5.1f", i, tostring(label), tonumber(e.distance or 0))
+              if e.hp ~= nil then
+                withHp = withHp + 1
+                line = line .. string.format(" HP=%.1f/%.1f", e.hp, e.maxHp or 0)
               end
-              if e.x and e.y and e.z then
+              if e.x ~= nil and e.y ~= nil and e.z ~= nil then
+                withCoords = withCoords + 1
                 line = line .. string.format(" (%.1f, %.1f, %.1f)", e.x, e.y, e.z)
               end
+              if e.isPlayer then
+                players = players + 1
+                line = line .. " [PLAYER]"
+              end
               print(line)
+            end
+
+            print(string.format("Summary: total=%d, withHP=%d, withCoords=%d, players=%d", #hits, withHp, withCoords, players))
+            if tier >= 2 and #hits > 0 and withHp == 0 then
+              print("WARN: Tier >= 2 expected hp/maxHp on living entities")
+            end
+            if tier >= 3 and #hits > 0 and withCoords == 0 then
+              print("WARN: Tier 3 expected x/y/z coordinates")
             end
             """;
 
