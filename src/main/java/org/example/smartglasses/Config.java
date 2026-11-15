@@ -17,6 +17,10 @@ public class Config {
             .comment("Whether Smart Glasses remain connected across dimensions.")
             .define("allowCrossDimension", false);
 
+    private static final ModConfigSpec.BooleanValue RELATIVE_COORDINATES = BUILDER
+            .comment("When true, all coordinates exposed by Glasses Bridge and Radar are relative to the device block instead of absolute world coordinates.")
+            .define("relativeCoordinates", true);
+
     private static final ModConfigSpec.BooleanValue REQUIRE_ENERGY = BUILDER
             .comment("Whether Smart Glasses require FE energy to display HUD/AR widgets.")
             .define("requireEnergy", false);
@@ -61,6 +65,7 @@ public class Config {
 
     public static int maxRange = 256;
     public static boolean allowCrossDimension = false;
+    public static boolean relativeCoordinates = true;
     public static boolean requireEnergy = false;
     public static int energyCapacity = 100000;
     public static int energyPerTick = 5;
@@ -77,6 +82,7 @@ public class Config {
     static void onLoad(final ModConfigEvent event) {
         maxRange = MAX_RANGE.get();
         allowCrossDimension = ALLOW_CROSS_DIMENSION.get();
+        relativeCoordinates = RELATIVE_COORDINATES.get();
         requireEnergy = REQUIRE_ENERGY.get();
         energyCapacity = ENERGY_CAPACITY.get();
         energyPerTick = ENERGY_PER_TICK.get();

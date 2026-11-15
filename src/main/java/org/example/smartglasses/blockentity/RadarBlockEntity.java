@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import org.example.smartglasses.Config;
 import org.example.smartglasses.SmartGlasses;
 import org.example.smartglasses.block.RadarBlock;
 
@@ -55,6 +56,11 @@ public class RadarBlockEntity extends BlockEntity implements NamedDevice, Docume
     @Callback(name = "getMaxRange", synchronize = false)
     public double getMaxRangeCallback() {
         return getMaxRangeValue();
+    }
+
+    @Callback(name = "isRelativeCoordinates", synchronize = false)
+    public boolean isRelativeCoordinates() {
+        return Config.relativeCoordinates;
     }
 
     @Callback(name = "scan")
@@ -103,9 +109,12 @@ public class RadarBlockEntity extends BlockEntity implements NamedDevice, Docume
                     entry.put("isPlayer", false);
                     entry.put("name", e.getName().getString());
                 }
-                entry.put("x", e.getX());
-                entry.put("y", e.getY());
-                entry.put("z", e.getZ());
+                double ox = Config.relativeCoordinates ? e.getX() - worldPosition.getX() : e.getX();
+                double oy = Config.relativeCoordinates ? e.getY() - worldPosition.getY() : e.getY();
+                double oz = Config.relativeCoordinates ? e.getZ() - worldPosition.getZ() : e.getZ();
+                entry.put("x", ox);
+                entry.put("y", oy);
+                entry.put("z", oz);
             }
 
             results.add(entry);
@@ -129,5 +138,7 @@ public class RadarBlockEntity extends BlockEntity implements NamedDevice, Docume
                 .description("Returns the maximum scan radius in blocks (64, 128, or 256).");
         visitor.visitCallback("scan")
                 .description("Scans entities within radius (clamped to tier max). Tier 1: uuid/type/distance; Tier 2: +hp/maxHp; Tier 3: +name/isPlayer/x/y/z.");
+        visitor.visitCallback("isRelativeCoordinates")
+                .description("Returns true if entity coordinates are relative to the radar block.");
     }
 }

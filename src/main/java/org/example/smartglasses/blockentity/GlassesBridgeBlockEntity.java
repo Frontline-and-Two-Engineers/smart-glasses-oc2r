@@ -272,9 +272,9 @@ public class GlassesBridgeBlockEntity extends BlockEntity
                 info.put("uuid", player.getUUID().toString());
                 info.put("name", player.getGameProfile().getName());
                 info.put("tier", SmartGlassesItem.getTier(SmartGlassesItem.getEquippedGlasses(player)));
-                info.put("x", player.getX());
-                info.put("y", player.getY());
-                info.put("z", player.getZ());
+                info.put("x", outX(player.getX()));
+                info.put("y", outY(player.getY()));
+                info.put("z", outZ(player.getZ()));
                 info.put("dimension", player.level().dimension().location().toString());
                 result.add(info);
             }
@@ -418,7 +418,7 @@ public class GlassesBridgeBlockEntity extends BlockEntity
             @Parameter("label") String label,
             @Parameter("color") int color
     ) {
-        upsertGlobal(HudWidget.worldMarker(id, (float) x, (float) y, (float) z, label, color));
+        upsertGlobal(HudWidget.worldMarker(id, inX(x), inY(y), inZ(z), label, color));
     }
 
     @Callback(name = "addPlayerWorldMarker")
@@ -431,7 +431,7 @@ public class GlassesBridgeBlockEntity extends BlockEntity
             @Parameter("label") String label,
             @Parameter("color") int color
     ) {
-        upsertPlayer(parseUuid(playerUuid), HudWidget.worldMarker(id, (float) x, (float) y, (float) z, label, color));
+        upsertPlayer(parseUuid(playerUuid), HudWidget.worldMarker(id, inX(x), inY(y), inZ(z), label, color));
     }
 
     @Callback(name = "setAnchor")
@@ -522,7 +522,7 @@ public class GlassesBridgeBlockEntity extends BlockEntity
             @Parameter("z2") double z2,
             @Parameter("color") int color
     ) {
-        upsertGlobal(HudWidget.worldLine(id, (float) x1, (float) y1, (float) z1, (float) x2, (float) y2, (float) z2, color));
+        upsertGlobal(HudWidget.worldLine(id, inX(x1), inY(y1), inZ(z1), inX(x2), inY(y2), inZ(z2), color));
     }
 
     @Callback(name = "addPlayerWorldLine")
@@ -537,7 +537,7 @@ public class GlassesBridgeBlockEntity extends BlockEntity
             @Parameter("z2") double z2,
             @Parameter("color") int color
     ) {
-        upsertPlayer(parseUuid(playerUuid), HudWidget.worldLine(id, (float) x1, (float) y1, (float) z1, (float) x2, (float) y2, (float) z2, color));
+        upsertPlayer(parseUuid(playerUuid), HudWidget.worldLine(id, inX(x1), inY(y1), inZ(z1), inX(x2), inY(y2), inZ(z2), color));
     }
 
     @Callback(name = "addEntityMarker")
@@ -608,9 +608,9 @@ public class GlassesBridgeBlockEntity extends BlockEntity
         stats.put("xpLevel", player.experienceLevel);
         stats.put("yaw", player.getYRot());
         stats.put("pitch", player.getXRot());
-        stats.put("x", player.getX());
-        stats.put("y", player.getY());
-        stats.put("z", player.getZ());
+        stats.put("x", outX(player.getX()));
+        stats.put("y", outY(player.getY()));
+        stats.put("z", outZ(player.getZ()));
         stats.put("dimension", player.level().dimension().location().toString());
         stats.put("biome", player.level().getBiome(player.blockPosition()).unwrapKey()
                 .map(k -> k.location().toString()).orElse("unknown"));
@@ -728,14 +728,14 @@ public class GlassesBridgeBlockEntity extends BlockEntity
         ev.put("playerUuid", player.getUUID().toString());
         ev.put("playerName", player.getGameProfile().getName());
         ev.put("targetType", payload.targetType().name().toLowerCase(Locale.ROOT));
-        ev.put("hitX", payload.hitX());
-        ev.put("hitY", payload.hitY());
-        ev.put("hitZ", payload.hitZ());
+        ev.put("hitX", outX(payload.hitX()));
+        ev.put("hitY", outY(payload.hitY()));
+        ev.put("hitZ", outZ(payload.hitZ()));
 
         if (payload.targetType() == GlassesGazePayload.TargetType.BLOCK) {
-            ev.put("blockX", payload.blockPos().getX());
-            ev.put("blockY", payload.blockPos().getY());
-            ev.put("blockZ", payload.blockPos().getZ());
+            ev.put("blockX", (int) Math.floor(outX(payload.blockPos().getX())));
+            ev.put("blockY", (int) Math.floor(outY(payload.blockPos().getY())));
+            ev.put("blockZ", (int) Math.floor(outZ(payload.blockPos().getZ())));
             ev.put("face", payload.face().getName());
         } else if (payload.targetType() == GlassesGazePayload.TargetType.ENTITY && level != null) {
             Entity entity = level.getEntity(payload.entityId());
@@ -798,6 +798,35 @@ public class GlassesBridgeBlockEntity extends BlockEntity
         subscribers.put(sink, id);
     }
 
+    @Callback(name = "isRelativeCoordinates", synchronize = false)
+    public boolean isRelativeCoordinates() {
+        return Config.relativeCoordinates;
+    }
+
+    private double outX(double worldX) {
+        return Config.relativeCoordinates ? worldX - worldPosition.getX() : worldX;
+    }
+
+    private double outY(double worldY) {
+        return Config.relativeCoordinates ? worldY - worldPosition.getY() : worldY;
+    }
+
+    private double outZ(double worldZ) {
+        return Config.relativeCoordinates ? worldZ - worldPosition.getZ() : worldZ;
+    }
+
+    private float inX(double x) {
+        return (float) (Config.relativeCoordinates ? x + worldPosition.getX() : x);
+    }
+
+    private float inY(double y) {
+        return (float) (Config.relativeCoordinates ? y + worldPosition.getY() : y);
+    }
+
+    private float inZ(double z) {
+        return (float) (Config.relativeCoordinates ? z + worldPosition.getZ() : z);
+    }
+
     @Override
     public void unsubscribe(IEventSink sink) {
         subscribers.remove(sink);
@@ -823,7 +852,9 @@ public class GlassesBridgeBlockEntity extends BlockEntity
         visitor.visitCallback("addProgressBar")
                 .description("Adds or updates a 2D progress bar widget in virtual 1920x1080 space.");
         visitor.visitCallback("addWorldMarker")
-                .description("Adds or updates a 3D AR marker at world coordinates (x, y, z).");
+                .description("Adds or updates a 3D AR marker at (x, y, z) (relative to the bridge when relativeCoordinates is enabled).");
+        visitor.visitCallback("isRelativeCoordinates")
+                .description("Returns true if bridge coordinates are relative to the bridge block.");
         visitor.visitCallback("setAnchor")
                 .description("Sets the screen anchor (TOP_LEFT, TOP_CENTER, TOP_RIGHT, CENTER_LEFT, CENTER, CENTER_RIGHT, BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT) of a widget.");
         visitor.visitCallback("removeWidget")
