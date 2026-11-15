@@ -28,6 +28,7 @@ class Ext2ImageBuilderTest {
         int sb = 1024;
         assertEquals(Ext2ImageBuilder.TOTAL_INODES, buf.getInt(sb));
         assertEquals(Ext2ImageBuilder.TOTAL_BLOCKS, buf.getInt(sb + 4));
+        assertEquals(0, buf.getInt(sb + 32) % 8);
         assertEquals((short) 0xEF53, buf.getShort(sb + 56));
         assertEquals((short) 128, buf.getShort(sb + 88));
 

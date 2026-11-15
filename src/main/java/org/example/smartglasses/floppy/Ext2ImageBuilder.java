@@ -141,8 +141,8 @@ public final class Ext2ImageBuilder {
         buf.putInt(sbBase + 20, FIRST_DATA_BLOCK);
         buf.putInt(sbBase + 24, 0); // s_log_block_size (1024)
         buf.putInt(sbBase + 28, 0); // s_log_frag_size
-        buf.putInt(sbBase + 32, totalGroupBlocks); // s_blocks_per_group
-        buf.putInt(sbBase + 36, totalGroupBlocks); // s_frags_per_group
+        buf.putInt(sbBase + 32, BLOCK_SIZE * 8);   // s_blocks_per_group (8192, must be multiple of 8)
+        buf.putInt(sbBase + 36, BLOCK_SIZE * 8);   // s_frags_per_group (8192)
         buf.putInt(sbBase + 40, TOTAL_INODES);     // s_inodes_per_group
         buf.putShort(sbBase + 54, (short) 0xFFFF); // s_max_mnt_count
         buf.putShort(sbBase + 56, (short) EXT2_SUPER_MAGIC);
@@ -152,6 +152,9 @@ public final class Ext2ImageBuilder {
         buf.putInt(sbBase + 84, FIRST_NON_RESERVED_INODE);
         buf.putShort(sbBase + 88, (short) INODE_SIZE);
         buf.putInt(sbBase + 96, 0x0002);      // s_feature_incompat = FILETYPE
+        // Non-zero s_uuid (16 bytes at offset 104)
+        buf.putLong(sbBase + 104, 0x536D617274476C61L);
+        buf.putLong(sbBase + 112, 0x737365734F433252L);
 
         return image;
     }
